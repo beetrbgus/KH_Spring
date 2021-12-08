@@ -15,4 +15,12 @@ public class MemberDto {
 	private Date memberJoin;
 	private int memberPoint;
 	private String memberGrade;
+	
+	public String getMemberBirthDay() {
+		return this.memberBirth.substring(0, 10);
+	}
 }
+
+
+
+

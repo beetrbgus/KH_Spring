@@ -11,5 +11,10 @@ public interface MemberDao {
 	
 	//비밀번호 변경
 	boolean changePassword(String memberId, String memberPw, String changePw);
+	//개인정보 변경
+	boolean changeInformation(MemberDto memberDto);
+
+	//회원 탈퇴
+	boolean quit(String memberId, String memberPw);
 	
 }

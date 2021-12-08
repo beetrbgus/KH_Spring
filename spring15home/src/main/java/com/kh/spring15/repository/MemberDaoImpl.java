@@ -48,8 +48,24 @@ public class MemberDaoImpl implements MemberDao{
 		return count > 0;
 	}
 	
+	@Override
+	public boolean changeInformation(MemberDto memberDto) {
+		int count = sqlSession.update("member.changeInformation", memberDto);
+		return count > 0;
+	}
+	
+	@Override
+	public boolean quit(String memberId, String memberPw) {
+//		Map<String, Object> param = new HashMap<>();
+//		param.put("memberId", memberId);
+//		param.put("memberPw", memberPw);
+//		int count = sqlSession.delete("member.quit", param);
+		
+		MemberDto memberDto = new MemberDto();
+		memberDto.setMemberId(memberId);
+		memberDto.setMemberPw(memberPw);
+		int count = sqlSession.delete("member.quit", memberDto);
+		return count > 0;
+	}
+	
 }
-
-
-
-

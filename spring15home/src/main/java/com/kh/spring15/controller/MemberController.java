@@ -75,7 +75,6 @@ public class MemberController {
 	@RequestMapping("/mypage")
 	public String mypage(HttpSession session, Model model) {
 		String memberId = (String)session.getAttribute("ses");
-		System.out.println("memberId = " + memberId);
 		MemberDto memberDto = memberDao.get(memberId);
 		model.addAttribute("memberDto", memberDto);
 //		return "/WEB-INF/views/member/mypage.jsp";
@@ -109,5 +108,64 @@ public class MemberController {
 	public String passwordSuccess() {
 //		return "/WEB-INF/views/member/password_success.jsp";
 		return "member/password_success";
+	}
+	
+	@GetMapping("/edit")
+	public String edit(HttpSession session, Model model) {
+		String memberId = (String) session.getAttribute("ses");
+		MemberDto memberDto = memberDao.get(memberId);
+		
+		model.addAttribute("memberDto", memberDto);
+		
+//		return "/WEB-INF/views/member/edit.jsp";
+		return "member/edit";
+	}
+	
+	@PostMapping("/edit")
+	public String edit(@ModelAttribute MemberDto memberDto, HttpSession session) {
+		String memberId = (String)session.getAttribute("ses");
+		memberDto.setMemberId(memberId);
+		
+		boolean result = memberDao.changeInformation(memberDto);
+		if(result) {
+			return "redirect:edit_success";
+		}
+		else {
+			return "redirect:edit?error";
+		}
+	}
+	
+	@RequestMapping("/edit_success")
+	public String editSuccess() {
+//		return "/WEB-INF/views/member/edit_success.jsp";
+		return "member/edit_success";
+	}
+	
+	@GetMapping("/quit")
+	public String quit() {
+//		return "/WEB-INF/views/member/quit.jsp";
+		return "member/quit";
+	}
+	
+	@PostMapping("/quit")
+	public String quit(HttpSession session, @RequestParam String memberPw) {
+		String memberId = (String)session.getAttribute("ses");
+		
+		boolean result = memberDao.quit(memberId, memberPw);
+		if(result) {
+			session.removeAttribute("ses");
+			session.removeAttribute("grade");
+			
+			return "redirect:quit_success";
+		}
+		else {
+			return "redirect:quit?error";
+		}
+	}
+	
+	@RequestMapping("/quit_success")
+	public String quitSuccess() {
+//		return "/WEB-INF/views/member/quit_success";
+		return "member/quit_success";
 	}
 }

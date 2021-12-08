@@ -48,13 +48,13 @@
 			
 			<!-- 각종 메뉴들 -->
 			<div class="row center">
-				<a href="password.jsp" class="link-btn-block">비밀번호 변경</a>
+				<a href="password" class="link-btn-block">비밀번호 변경</a>
 			</div>
 			<div class="row center">
-				<a href="edit.jsp" class="link-btn-block">개인정보 변경</a>
+				<a href="edit" class="link-btn-block">개인정보 변경</a>
 			</div>
 			<div class="row center">
-				<a href="check.jsp" class="link-btn-block">회원 탈퇴</a>
+				<a href="quit" class="link-btn-block">회원 탈퇴</a>
 			</div>
 			
 		</div>
@@ -75,11 +75,11 @@
 						</tr>
 						<tr>
 							<th>닉네임</th>
-							<td>${memberDto.memberPw}</td>
+							<td>${memberDto.memberNick}</td>
 						</tr>
 						<tr>
 							<th>생년월일</th>
-							<td>${memberDto.memberBirth}</td>
+							<td>${memberDto.getMemberBirthDay()}</td>
 						</tr>
 						<tr>
 							<th>이메일</th>
