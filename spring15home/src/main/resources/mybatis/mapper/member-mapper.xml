@@ -45,7 +45,7 @@
 	<!-- 비밀번호 변경 -->
 	<update id="changePassword" parameterType="map">
 		update member set member_pw = #{changePw}
-		where member_id = #{memberId} and member_pw = #{memberPw}
+		where member_id = #{memberId}
 	</update>
 	
 	<!-- 
@@ -64,8 +64,6 @@
 			member_phone = #{memberPhone}
 		where
 			member_id = #{memberId}
-			and
-			member_pw = #{memberPw}
 	</update>
 	
 	<update id="changeInformation2" parameterType="MemberDto">
@@ -105,18 +103,11 @@
 				member_grade = #{memberGrade},
 			</if>
 		</set>
-		<where>
-			<if test="memberId != null">
-				and member_id = #{memberId}
-			</if>
-			<if test="memberPw != null">
-				and member_pw = #{memberPw}
-			</if>
-		</where>
+		where member_id = #{memberId}
 	</update>
 	
-	<delete id="quit" parameterType="MemberDto">
-		delete member where member_id = #{memberId} and member_pw = #{memberPw}
+	<delete id="quit" parameterType="String">
+		delete member where member_id = #{memberId}
 	</delete>
 		
 </mapper>

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.spring15.entity.MemberDto;
 
-@Repository
+//@Repository
 public class MemberDaoImpl implements MemberDao{
 
 	@Autowired
@@ -69,3 +69,7 @@ public class MemberDaoImpl implements MemberDao{
 	}
 	
 }
+
+
+
+
