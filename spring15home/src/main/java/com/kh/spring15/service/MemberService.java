@@ -1,5 +1,7 @@
 package com.kh.spring15.service;
 
-public class MemberService {
+import com.kh.spring15.vo.MemberJoinVO;
 
+public interface MemberService {
+	void join(MemberJoinVO memberJoinVO);
 }

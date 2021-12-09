@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.spring15.entity.MemberDto;
 import com.kh.spring15.repository.MemberDao;
+import com.kh.spring15.vo.MemberJoinVO;
 
 @Controller
 @RequestMapping("/member")
@@ -59,8 +60,8 @@ public class MemberController {
 	}
 	
 	@PostMapping("/join")
-	public String join(@ModelAttribute MemberDto memberDto) {
-		memberDao.join(memberDto);
+	public String join(@ModelAttribute MemberJoinVO memberJoinVO) {
+		
 //		return "redirect:/member/join_success";
 		return "redirect:join_success";
 	}
