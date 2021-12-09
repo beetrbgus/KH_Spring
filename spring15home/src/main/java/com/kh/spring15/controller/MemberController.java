@@ -1,5 +1,7 @@
 package com.kh.spring15.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.spring15.entity.MemberDto;
 import com.kh.spring15.repository.MemberDao;
+import com.kh.spring15.service.MemberService;
 import com.kh.spring15.vo.MemberJoinVO;
 
 @Controller
@@ -21,6 +24,9 @@ public class MemberController {
 	
 	@Autowired
 	private MemberDao memberDao;
+	
+	@Autowired
+	private MemberService memberService;
 	
 	@GetMapping("/login")
 	public String login() {
@@ -60,8 +66,8 @@ public class MemberController {
 	}
 	
 	@PostMapping("/join")
-	public String join(@ModelAttribute MemberJoinVO memberJoinVO) {
-		
+	public String join(@ModelAttribute MemberJoinVO memberJoinVO) throws IllegalStateException, IOException {
+		memberService.join(memberJoinVO);
 //		return "redirect:/member/join_success";
 		return "redirect:join_success";
 	}

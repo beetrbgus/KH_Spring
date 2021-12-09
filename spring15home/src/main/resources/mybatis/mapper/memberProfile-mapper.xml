@@ -15,7 +15,24 @@
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="member">
-	
+	<select id="seq" resultType="int">
+		select member_profile.seq.nextval from dual
+	</select>
+	<!-- 등록을 할 때 시퀀스를 생성하면 안 된다. -->
+	<insert id="save" parameterType="MemberProfileDto">
+		insert into member_profile(
+			member_profile_no,
+			member_id,
+			member_profile_uploadname,
+			member_profile_savename,
+			member_profile_size,
+			member_profile_type
+		) values(
+			#{memberProfileNo},#{memberId},
+			#{memberProfileUploadname},#{memberProfileSavename},
+			#{memberProfileSize},#{memberProfileType}
+		)
+	</insert>
 	<!-- 단일조회 -->
 	<select id="get" parameterType="String" resultType="MemberDto">
 		select * from member where member_id = #{memberId}
