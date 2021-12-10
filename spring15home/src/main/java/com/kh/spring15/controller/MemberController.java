@@ -1,10 +1,15 @@
 package com.kh.spring15.controller;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +17,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kh.spring15.entity.MemberDto;
+import com.kh.spring15.entity.MemberProfileDto;
 import com.kh.spring15.repository.MemberDao;
+import com.kh.spring15.repository.MemberProfileDao;
 import com.kh.spring15.service.MemberService;
 import com.kh.spring15.vo.MemberJoinVO;
 
@@ -27,6 +35,9 @@ public class MemberController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private MemberProfileDao memberProfileDao;
 	
 	@GetMapping("/login")
 	public String login() {
@@ -83,7 +94,11 @@ public class MemberController {
 	public String mypage(HttpSession session, Model model) {
 		String memberId = (String)session.getAttribute("ses");
 		MemberDto memberDto = memberDao.get(memberId);
+		MemberProfileDto memberProfileDto = memberProfileDao.get(memberId);
+		
 		model.addAttribute("memberDto", memberDto);
+		model.addAttribute("memberProfileDto", memberProfileDto);
+		
 //		return "/WEB-INF/views/member/mypage.jsp";
 		return "member/mypage";
 	}
@@ -174,5 +189,38 @@ public class MemberController {
 	public String quitSuccess() {
 //		return "/WEB-INF/views/member/quit_success";
 		return "member/quit_success";
+	}
+	
+//	프로필 다운로드에 대한 요청 처리
+//	= (주의) 뷰 리졸버가 적용되면 안된다. @ResponseBody 를 사용하면 무시 처리된다
+//	= 문자열이 아니라 파일 정보를 반환해서 스프링으로 하여금 다운로드 처리할 수 있도록 부탁
+//	= ResponseEntity는 데이터와 정보(헤더)를 같이 설정할 수 있도록 만들어진 Spring 도구
+//	= ByteArrayResource는 바이트 배열 형태의 자원을 담을 수 있는 Spring 도구
+	@GetMapping("/profile")
+	@ResponseBody//이 메소드만큼은 뷰 리졸버를 쓰지 않겠다
+	public ResponseEntity<ByteArrayResource> profile(
+				@RequestParam int memberProfileNo
+			) throws IOException {
+		
+		//프로필번호(memberProfileNo)로 프로필 이미지 파일정보를 구한다.
+		MemberProfileDto memberProfileDto = memberProfileDao.get(memberProfileNo);
+		
+		//프로필번호(memberProfileNo)로 실제 파일 정보를 불러온다
+		byte[] data = memberProfileDao.load(memberProfileNo);
+		ByteArrayResource resource = new ByteArrayResource(data);
+		
+		String encodeName = URLEncoder.encode(memberProfileDto.getMemberProfileUploadname(), "UTF-8");
+		encodeName = encodeName.replace("+", "%20");
+		
+		return ResponseEntity.ok()
+				//.header("Content-Type", "application/octet-stream")
+				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				//.header("Content-Disposition", "attachment; filename=\""+이름+"\"")
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+encodeName+"\"")
+				//.header("Content-Encoding", "UTF-8")
+				.header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
+				//.header("Content-Length", String.valueOf(memberProfileDto.getMemberProfileSize()))
+				.contentLength(memberProfileDto.getMemberProfileSize())
+				.body(resource);
 	}
 }

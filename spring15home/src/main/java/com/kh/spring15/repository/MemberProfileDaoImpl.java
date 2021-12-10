@@ -3,6 +3,7 @@ package com.kh.spring15.repository;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -24,8 +25,6 @@ public class MemberProfileDaoImpl implements MemberProfileDao{
 	 * 1. 시퀀스 번호를 구해온다.
 	 * 2. 실제 파일을 시퀀스 번호로 저장한다.
 	 * 3. 파일 정보를 DB에 저장한다.
-	 * @throws IOException 
-	 * @throws IllegalStateException 
 	 */
 	@Override
 	public void save(MemberProfileDto memberProfileDto, MultipartFile multipartFile) throws IllegalStateException, IOException {
@@ -40,6 +39,23 @@ public class MemberProfileDaoImpl implements MemberProfileDao{
 		memberProfileDto.setMemberProfileNo(sequence);
 		memberProfileDto.setMemberProfileSavename(String.valueOf(sequence));
 		sqlSession.insert("memberProfile.save", memberProfileDto);
+	}
+
+	@Override
+	public MemberProfileDto get(int memberProfileNo) {
+		return sqlSession.selectOne("memberProfile.get", memberProfileNo);
+	}
+	
+	@Override
+	public byte[] load(int memberProfileNo) throws IOException {
+		File target = new File(directory, String.valueOf(memberProfileNo));
+		byte[] data = FileUtils.readFileToByteArray(target);
+		return data;
+	}
+	
+	@Override
+	public MemberProfileDto get(String memberId) {
+		return sqlSession.selectOne("memberProfile.getById", memberId);
 	}
 	
 }

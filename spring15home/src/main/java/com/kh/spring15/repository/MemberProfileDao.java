@@ -8,4 +8,7 @@ import com.kh.spring15.entity.MemberProfileDto;
 
 public interface MemberProfileDao {
 	void save(MemberProfileDto memberProfileDto, MultipartFile multipartFile) throws IllegalStateException, IOException;
+	MemberProfileDto get(int memberProfileNo);
+	MemberProfileDto get(String memberId);
+	byte[] load(int memberProfileNo) throws IOException;
 }
