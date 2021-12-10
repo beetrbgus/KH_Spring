@@ -20,7 +20,10 @@ public class MemberInterceptor implements HandlerInterceptor{
 		}
 		
 	}
-
+	/*
+	 * postHandle은 컨트롤러의 작업 수행 직후에 간섭하는 메소드이다.
+	 * 
+	 * */
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {

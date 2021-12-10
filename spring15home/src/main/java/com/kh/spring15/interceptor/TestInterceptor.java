@@ -32,7 +32,7 @@ public class TestInterceptor implements HandlerInterceptor{
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub
+		System.out.println("TestInterceptor의 postHandle 실행!");
 		HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
 	}
 
