@@ -76,7 +76,23 @@
 	
 	<!-- 암호화를 위한 Encoder 등록 -->
 	<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
-	
+	<!-- 이메일 전송 도구 -->
+	<bean id="sender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com"></property>
+		<property name="port" value="587"></property>
+		<property name="username" value="devtestbeetrb@gmail.com"></property>
+		<property name="password" value="devtestbeetrb1234!@#$"></property>
+		
+		<property name="javaMailProperties" >
+		 <props>
+		 	<prop key="mail.smtp.auth">true</prop>
+		 	<prop key="mail.smtp.debug">true</prop>
+		 	<prop key="mail.smtp.starttls.enable">true</prop>
+		 	<prop key="mail.smtp.ssl.protocols">TLSv1.2</prop>
+		 	<prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+		 </props>
+		</property>
+	</bean>
 	<!-- 
 		사용할 필터를 bean으로 전체 설정에 등록
 		= 반드시 이곳에 해야 한다(서블릿 설정파일에 하면 인식이 안됨) 
