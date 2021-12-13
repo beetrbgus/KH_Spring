@@ -1,46 +1,51 @@
 package com.kh.spring19;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-/**
- * Handles requests for the application home page.
- */
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class CookieController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(CookieController.class);
-	
-	@RequestMapping(value = "/")
-	public String home(Locale locale, Model model) {
+	@RequestMapping("/")
+	public String home() {
 		return "home";
 	}
-	@RequestMapping(value = "/create")
+	
+	@RequestMapping("/create")
 	public String create(HttpServletResponse response) {
-		Cookie cookie = new Cookie("test", "hello");
-		cookie.setMaxAge(10);
-		response.addCookie(cookie);
+		//쿠키 생성
+		Cookie c = new Cookie("test", "hello");
+		//c.setMaxAge(10);//미지정 시 세션 쿠키로 관리됨(세션 만료시 사라짐)
+		response.addCookie(c);
 		return "redirect:/";
 	}
-	@RequestMapping(value = "/drop")
+	
+	@RequestMapping("/drop")
 	public String drop(HttpServletResponse response) {
-		Cookie cookie = new Cookie("test", "hello");
-		cookie.setMaxAge(0);
-		
-		response.addCookie(cookie);
-		
+		//쿠키 생성
+		Cookie c = new Cookie("test", "hello");
+		c.setMaxAge(0);
+		response.addCookie(c);
+		return "redirect:/";
+	}
+	
+	@RequestMapping("/check")
+	public String check(@CookieValue(required = false) String test) {
+		log.debug("test = {}", test);
+		if(test == null) {
+			log.debug("쿠키가 없습니다");
+		}
+		else{
+			log.debug("쿠키가 있습니다");
+		}
 		return "redirect:/";
 	}
 }

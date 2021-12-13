@@ -3,6 +3,8 @@ package com.kh.spring15.controller;
 import java.io.IOException;
 import java.net.URLEncoder;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,13 +48,34 @@ public class MemberController {
 	}
 	
 	@PostMapping("/login")
-	public String login(@ModelAttribute MemberDto memberDto, HttpSession session) {
+	public String login(
+			@ModelAttribute MemberDto memberDto,//회원정보
+			@RequestParam(required = false) String saveId,//아이디 저장(선택)
+			HttpServletResponse response,//쿠키 생성을 위한 응답객체
+			HttpSession session) {//세션객체
 		//회원정보 단일조회 및 비밀번호 일치판정
 		MemberDto findDto = memberDao.login(memberDto);
 		if(findDto != null) {
 			//세션에 ses, grade를 설정하고 root로 리다이렉트
 			session.setAttribute("ses", findDto.getMemberId());
 			session.setAttribute("grade", findDto.getMemberGrade());
+			
+			//쿠키와 관련된 아이디 저장하기 처리
+			if(saveId != null) {//체크 했다면(saveId값이 전송되었다면)
+				//생성
+				Cookie c = new Cookie("saveId", findDto.getMemberId());
+				//c.setMaxAge(2 * 7 * 24 * 60 * 60);//2주
+				c.setMaxAge(4 * 7 * 24 * 60 * 60);//4주
+				//c.setMaxAge(Integer.MAX_VALUE);//무한대
+				response.addCookie(c);
+			}
+			else {//체크 안했다면(saveId값이 전송되지 않았다면)
+				//삭제
+				Cookie c = new Cookie("saveId", findDto.getMemberId());
+				c.setMaxAge(0);
+				response.addCookie(c);
+			}
+			
 			return "redirect:/";
 		}
 		else {
@@ -214,14 +236,44 @@ public class MemberController {
 		encodeName = encodeName.replace("+", "%20");
 		
 		return ResponseEntity.ok()
-				//.header("Content-Type", "application/octet-stream")
-				.contentType(MediaType.APPLICATION_OCTET_STREAM)
-				//.header("Content-Disposition", "attachment; filename=\""+이름+"\"")
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+encodeName+"\"")
-				//.header("Content-Encoding", "UTF-8")
-				.header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
-				//.header("Content-Length", String.valueOf(memberProfileDto.getMemberProfileSize()))
-				.contentLength(memberProfileDto.getMemberProfileSize())
-				.body(resource);
+									//.header("Content-Type", "application/octet-stream")
+									.contentType(MediaType.APPLICATION_OCTET_STREAM)
+									//.header("Content-Disposition", "attachment; filename=\""+이름+"\"")
+									.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+encodeName+"\"")
+									//.header("Content-Encoding", "UTF-8")
+									.header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
+									//.header("Content-Length", String.valueOf(memberProfileDto.getMemberProfileSize()))
+									.contentLength(memberProfileDto.getMemberProfileSize())
+								.body(resource);
 	}
+	
+	
+	/**
+	 * 현재 컨트롤러에서 발생하는 예외를 처리하는 핸들러 매핑
+	 * try {
+	 * 		현재 컨트롤러의 모든 메소드들
+	 * }
+	 * catch(Exception e){
+	 * 		이곳의 내용을 작성하는 느낌...
+	 * }
+	 */
+//	@ExceptionHandler(Exception.class)
+//	public String handler(Exception e) {
+//		//로그(logging) 생성 또는 기타 처리 추가
+//		return "error/500";
+//	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
