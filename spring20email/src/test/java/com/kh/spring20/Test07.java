@@ -14,12 +14,12 @@ import com.kh.spring20.repository.CertificationDao;
 
 import lombok.extern.slf4j.Slf4j;
 
+@WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"file:src/main/webapp/WEB-INF/spring/root-context.xml", 
 		"file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml"
 })
-@WebAppConfiguration
 @Slf4j
 public class Test07 {
 	
