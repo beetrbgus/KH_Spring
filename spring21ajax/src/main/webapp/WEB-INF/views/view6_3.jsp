@@ -62,15 +62,7 @@
 					template = template.replace("{{type}}", resp[i].type);
 					template = template.replace("{{score}}", resp[i].score);
 					
-// 					버튼에 onclick을 작성할 경우
-// 					$("#result").append(template);
-					
-// 					버튼에 class와 data-exam-id를 두고 이벤트를 jquery에서 부여하는 경우
-					var tag = $(template);//template은 글자니까 jQuery로 감싸서 생성을 시키고
-					tag.find(".remove-btn").click(function(){//tag에서 .remove-btn을 찾아서 클릭 이벤트 지정하고
-						deleteData($(this).data("exam-id"));
-					});
-					$("#result").append(tag);//추가!
+					$("#result").append(template);
 				}
 			},
 			error:function(e){}
@@ -103,7 +95,7 @@
 		<span>{{subject}}</span>
 		<span>{{type}}</span>
 		<span>{{score}}</span>
-		<button class="remove-btn" data-exam-id="{{examId}}">x</button>
+		<button onclick="deleteData({{examId}});">x</button>
 	</div>
 </template>
 
