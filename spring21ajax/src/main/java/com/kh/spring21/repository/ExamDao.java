@@ -13,4 +13,6 @@ public interface ExamDao {
 	List<ExamDto> listByPage(int startRow, int endRow);
 	
 	ExamDto get(int examId);
+
+	boolean delete(int examId);
 }

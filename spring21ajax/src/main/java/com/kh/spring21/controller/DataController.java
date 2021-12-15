@@ -3,6 +3,7 @@ package com.kh.spring21.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,4 +71,9 @@ public class DataController {
 		examDao.insert(examDto);
 	}
 	
+	//삭제 기능
+	@DeleteMapping("/data8")
+	public boolean data8(@RequestParam int examId) {
+		return examDao.delete(examId);
+	}
 }

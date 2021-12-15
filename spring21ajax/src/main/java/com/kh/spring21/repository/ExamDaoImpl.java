@@ -54,5 +54,11 @@ public class ExamDaoImpl implements ExamDao{
 		param.put("endRow", endRow);
 		return sqlSession.selectList("exam.listByPage", param);
 	}
+
+	@Override
+	public boolean delete(int examId) {
+		int result = sqlSession.delete("exam.delete", examId);
+		return result > 0;
+	}
 	
 }

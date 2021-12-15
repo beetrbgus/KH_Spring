@@ -56,6 +56,7 @@
 					
 					template = template.replace("{{examId}}", resp[i].examId);
 					template = template.replace("{{examId}}", resp[i].examId);
+					template = template.replace("{{examId}}", resp[i].examId);
 // 					template = template.replace(/\{\{examId\}\}/g, resp[i].examId);
 					template = template.replace("{{student}}", resp[i].student);
 					template = template.replace("{{subject}}", resp[i].subject);
@@ -69,6 +70,30 @@
 					var tag = $(template);//template은 글자니까 jQuery로 감싸서 생성을 시키고
 					tag.find(".remove-btn").click(function(){//tag에서 .remove-btn을 찾아서 클릭 이벤트 지정하고
 						deleteData($(this).data("exam-id"));
+					});
+					tag.find(".edit-btn").click(function(){
+						var examId = $(this).prevAll(".exam-id").text();
+						var student = $(this).prevAll(".student").text();
+						var subject = $(this).prevAll(".subject").text();
+						var type = $(this).prevAll(".type").text();
+						var score = $(this).prevAll(".score").text();
+						
+						var form = $("<form>");
+						form.append("<input type='hidden' name='examId' value='"+examId+"'>");
+						form.append("<input type='text' name='student' value='"+student+"'>");
+						form.append("<input type='text' name='subject' value='"+subject+"'>");
+						form.append("<input type='text' name='type' value='"+type+"'>");
+						form.append("<input type='text' name='score' value='"+score+"'>");
+						form.append("<button type='submit'>수정</button>");
+						
+						form.submit(function(e){
+							e.preventDefault();
+							
+							//ajax...
+						});
+						
+						var div = $(this).parent();
+						div.html(form);
 					});
 					$("#result").append(tag);//추가!
 				}
@@ -98,11 +123,12 @@
 </script>
 <template id="examdto-template">
 	<div class="item">
-		<span>{{examId}}</span>
-		<span>{{student}}</span>
-		<span>{{subject}}</span>
-		<span>{{type}}</span>
-		<span>{{score}}</span>
+		<span class="exam-id">{{examId}}</span>
+		<span class="student">{{student}}</span>
+		<span class="subject">{{subject}}</span>
+		<span class="type">{{type}}</span>
+		<span class="score">{{score}}</span>
+		<button class="edit-btn" data-exam-id="{{examId}}">e</button>
 		<button class="remove-btn" data-exam-id="{{examId}}">x</button>
 	</div>
 </template>
