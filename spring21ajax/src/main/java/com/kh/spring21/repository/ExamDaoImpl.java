@@ -47,4 +47,12 @@ public class ExamDaoImpl implements ExamDao{
 		return sqlSession.selectList("exam.searchByColumnAndKeyword", param);
 	}
 	
+	@Override
+	public List<ExamDto> listByPage(int startRow, int endRow) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("startRow", startRow);
+		param.put("endRow", endRow);
+		return sqlSession.selectList("exam.listByPage", param);
+	}
+	
 }
