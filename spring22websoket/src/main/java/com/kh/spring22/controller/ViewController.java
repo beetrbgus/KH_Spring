@@ -18,4 +18,8 @@ public class ViewController {
 	public String manage() {
 		return "manage";
 	}
+	@GetMapping("/message")
+	public String message() {
+		return "message";
+	}
 }

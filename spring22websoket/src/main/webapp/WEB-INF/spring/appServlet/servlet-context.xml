@@ -92,6 +92,7 @@
 	  -->
 	<bean id="basicServer" class="com.kh.spring22.websocket.BasicWebsocketServer"></bean>
 	<bean id="manageServer" class="com.kh.spring22.websocket.ManageWebsocketServer"></bean>
+	<bean id="messageServer" class="com.kh.spring22.websocket.MessageWebsocketServer"></bean>
 	
 	<websocket:handlers>
 		
@@ -101,6 +102,7 @@
 		-->
 		<websocket:mapping handler="basicServer" path="/basicServer" />
 		<websocket:mapping handler="manageServer" path="/mangeServer" />
+		<websocket:mapping handler="messageServer" path="/messageServer" />
 	</websocket:handlers>
 	
 </beans>
