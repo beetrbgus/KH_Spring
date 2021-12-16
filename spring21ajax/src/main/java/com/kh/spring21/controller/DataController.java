@@ -1,8 +1,17 @@
 package com.kh.spring21.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,9 +19,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.spring21.entity.ExamDto;
+import com.kh.spring21.entity.TempDto;
 import com.kh.spring21.repository.ExamDao;
+import com.kh.spring21.repository.TempDao;
 
 //데이터를 반환하는 컨트롤러를 만들려면 매 요청마다 @ReponseBody를 추가해야 한다.
 //@RestController를 이용하면 모든 요청이 @ResponseBody 처리된다.
@@ -76,4 +88,69 @@ public class DataController {
 	public boolean data8(@RequestParam int examId) {
 		return examDao.delete(examId);
 	}
+	
+	/**
+	 간단한 테이블을 만들어 비동기 업로드 처리를 확인
+	 create table temp(
+		no number primary key,
+		name varchar2(256) not null
+	);
+	create sequence temp_seq;
+	 */
+	
+	@Autowired
+	private TempDao tempDao;
+	
+	//파일 업로드
+	@PostMapping("/data9")
+	public int data9(@RequestParam MultipartFile attach) throws IllegalStateException, IOException{
+		if(attach.isEmpty()) {
+			throw new FileNotFoundException("업로드된 파일이 존재하지 않습니다");
+		}
+		
+		TempDto tempDto = new TempDto();
+		tempDto.setName(attach.getOriginalFilename());
+		int no = tempDao.save(tempDto);//등록
+		
+		File target = new File("D:/upload", String.valueOf(no));
+		attach.transferTo(target);
+		
+		return no;
+	}
+	
+	//파일 다운로드 : 기존과 동일
+	@GetMapping("/data10")
+	public ResponseEntity<ByteArrayResource> data10(@RequestParam int no) throws IOException{
+		
+		TempDto tempDto = tempDao.get(no);
+		if(tempDto == null) {
+			return ResponseEntity.notFound().build();//resp.sendError(404);
+		}
+		
+		File target = new File("D:/upload", String.valueOf(no));
+		byte[] data = FileUtils.readFileToByteArray(target);
+		ByteArrayResource resource = new ByteArrayResource(data);
+		
+		String encodeName = URLEncoder.encode(tempDto.getName(), "UTF-8");
+		encodeName = encodeName.replace("+", "%20");
+		
+		return ResponseEntity.ok()
+											.contentType(MediaType.APPLICATION_OCTET_STREAM)
+											.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+encodeName+"\"")
+											.header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
+										.body(resource);
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
