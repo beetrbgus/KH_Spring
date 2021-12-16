@@ -260,6 +260,17 @@
 		    <version>2.13.0</version>
 		</dependency>
 		
+		<!-- 
+			웹소켓(Websocket) 의존성
+			- spring-websocket : 스프링 웹소켓 모듈
+			- jackson-databind : 웹소켓에서 주고받는 데이터 변환 객체
+		 -->
+		 <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+		
 	</dependencies>
 	
 	<!-- 
