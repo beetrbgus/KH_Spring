@@ -66,4 +66,25 @@
 		) where rn between #{startRow} and #{endRow}		
 	</select>
 	
+	<delete id="delete" parameterType="int">
+		delete exam where exam_id = #{examId}
+	</delete>
+	
+	<select id="countBySubject" resultType="ChartVO">
+		select subject "text", count(*) "count" from exam group by subject
+	</select>
+	
+	<select id="countByType" resultType="ChartVO">
+		select type "text", count(*) "count" from exam group by type
+	</select>
+	
 </mapper>
+
+
+
+
+
+
+
+
+

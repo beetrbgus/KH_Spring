@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import com.kh.spring21.entity.ExamDto;
 import com.kh.spring21.entity.TempDto;
 import com.kh.spring21.repository.ExamDao;
 import com.kh.spring21.repository.TempDao;
+import com.kh.spring21.vo.ChartTotalVO;
 import com.kh.spring21.vo.ChartVO;
 
 //데이터를 반환하는 컨트롤러를 만들려면 매 요청마다 @ReponseBody를 추가해야 한다.
@@ -152,4 +155,34 @@ public class DataController {
 		return examDao.countByType();
 	}
 	
+	//13, 14번은 동일한 예제
+	@GetMapping("/data13")
+	public Map<String, Object> data13(){
+		Map<String, Object> map = new HashMap<>();
+		map.put("title", "과목 별 응시생 수");
+		map.put("label", "응시생 수");
+		map.put("dataset", examDao.countBySubject());
+		return map;
+	}
+	
+	@GetMapping("/data14")
+	public ChartTotalVO data14() {
+		ChartTotalVO vo = new ChartTotalVO();
+		vo.setTitle("과목 별 응시생 수");
+		vo.setLabel("응시생 수");
+		vo.setDataset(examDao.countBySubject());
+		return vo;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+

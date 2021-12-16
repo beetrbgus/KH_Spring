@@ -60,4 +60,20 @@ public class ViewController {
 	public String view9() {
 		return "view9";
 	}
+	
+	@GetMapping("/view10")
+	public String view10() {
+		return "view10";
+	}
+	
+	@GetMapping("/view11")
+	public String view11() {
+		return "view11";
+	}
 }
+
+
+
+
+
+
