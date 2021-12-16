@@ -3,6 +3,7 @@ package com.kh.spring21.repository;
 import java.util.List;
 
 import com.kh.spring21.entity.ExamDto;
+import com.kh.spring21.vo.ChartVO;
 
 public interface ExamDao {
 	void insert(ExamDto examDto);
@@ -13,6 +14,9 @@ public interface ExamDao {
 	List<ExamDto> listByPage(int startRow, int endRow);
 	
 	ExamDto get(int examId);
+	
+	List<ChartVO> countBySubject();
+	List<ChartVO> countByType();
 
 	boolean delete(int examId);
 }

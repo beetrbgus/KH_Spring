@@ -25,6 +25,7 @@ import com.kh.spring21.entity.ExamDto;
 import com.kh.spring21.entity.TempDto;
 import com.kh.spring21.repository.ExamDao;
 import com.kh.spring21.repository.TempDao;
+import com.kh.spring21.vo.ChartVO;
 
 //데이터를 반환하는 컨트롤러를 만들려면 매 요청마다 @ReponseBody를 추가해야 한다.
 //@RestController를 이용하면 모든 요청이 @ResponseBody 처리된다.
@@ -141,16 +142,14 @@ public class DataController {
 										.body(resource);
 	}
 	
+	@GetMapping("/data11")
+	public List<ChartVO> data11(){
+		return examDao.countBySubject();
+	}
+	
+	@GetMapping("/data12")
+	public List<ChartVO> data12(){
+		return examDao.countByType();
+	}
+	
 }
-
-
-
-
-
-
-
-
-
-
-
-

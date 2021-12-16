@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.spring21.entity.ExamDto;
+import com.kh.spring21.vo.ChartVO;
 
 @Repository
 public class ExamDaoImpl implements ExamDao{
@@ -59,6 +60,16 @@ public class ExamDaoImpl implements ExamDao{
 	public boolean delete(int examId) {
 		int result = sqlSession.delete("exam.delete", examId);
 		return result > 0;
+	}
+
+	@Override
+	public List<ChartVO> countBySubject() {
+		return sqlSession.selectList("exam.countBySubject");
+	}
+
+	@Override
+	public List<ChartVO> countByType() {
+		return sqlSession.selectList("exam.countByType");
 	}
 	
 }

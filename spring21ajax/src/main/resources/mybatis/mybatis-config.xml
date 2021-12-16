@@ -32,6 +32,7 @@
 	-->
 	<typeAliases>
 		<package name="com.kh.spring21.entity"/>
+		<package name="com.kh.spring21.vo"/>
 	</typeAliases>
 	
 	

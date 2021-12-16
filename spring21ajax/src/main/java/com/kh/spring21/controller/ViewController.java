@@ -46,4 +46,18 @@ public class ViewController {
 		return "view6";
 	}
 	
+	@GetMapping("/view7")
+	public String view7() {
+		return "view7";
+	}
+	
+	@GetMapping("/view8")
+	public String view8() {
+		return "view8";
+	}
+	
+	@GetMapping("/view9")
+	public String view9() {
+		return "view9";
+	}
 }
