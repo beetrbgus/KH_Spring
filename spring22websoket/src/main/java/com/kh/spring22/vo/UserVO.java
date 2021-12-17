@@ -10,4 +10,11 @@ import lombok.EqualsAndHashCode;
 public class UserVO {
 	private String userId;
 	private WebSocketSession session;
+	
+	public boolean isMember() {
+		return userId != null;
+	}
+	public boolean isGuest() {
+		return userId == null;
+	}
 }
