@@ -14,7 +14,7 @@
 			var uri = "ws://";
 			uri += location.host;
 			uri += "${pageContext.request.contextPath}";
-			uri += "/messageServer";
+			uri += "/jsonServer";
 			
 			window.socket = new WebSocket(uri);
 			console.log(socket);
@@ -47,13 +47,25 @@
 		});
 		
 		//전송버튼
+		//= 전송버튼을 누르면 다음 형태의 데이터를 생성하여 전송
+		//= {"nickname":"???", "content":"???"}
 		$(".send-btn").click(function(){
-			//this == .send-btn
-			var text = $(".user-input").val();
-			if(!text) return;
+			var obj = {
+				nickname: $(".user-nickname").val(),
+				content:$(".user-input").val()
+			};
 			
-			window.socket.send(text);
-			$(".user-input").val("");
+			if(!obj.nickname || !obj.content) return;
+			
+			//window.socket.send(obj);//전송 안됨(문자열만 가능)
+			
+			//자바스크립트에서는 JSON 관련 처리를 JSON 모듈이 한다.
+			//= from 객체 to 문자열 : JSON.stringify()
+			//= from 문자열 to 객체 : JSON.parse()
+			var text = JSON.stringify(obj);
+			console.log(text);
+			
+			window.socket.send(text);//전송 가능(문자열)
 		});
 		
 	});
@@ -61,25 +73,30 @@
 	function connectOperation(){//연결 시 화면 처리
 		$(".connect-btn").prop("disabled", true);
 		$(".disconnect-btn").prop("disabled", false);
+		$(".user-nickname").prop("disabled", false);
 		$(".user-input").prop("disabled", false);
 		$(".send-btn").prop("disabled", false);
 	}
 	function disconnectOperation(){//종료 시 화면 처리
 		$(".connect-btn").prop("disabled", false);
 		$(".disconnect-btn").prop("disabled", true);
+		$(".user-nickname").prop("disabled", true);
 		$(".user-input").prop("disabled", true);
 		$(".send-btn").prop("disabled", true);
 	}
 </script>
-    
-<h1>MessageWebsocket 예제</h1>
+
+<h1>JsonWebsocket 예제</h1>
 
 <button class="connect-btn">연결</button>
 <button class="disconnect-btn">종료</button>
 
 <hr>
 
-<textarea class="user-input" cols="60" rows="5"></textarea>
+<input type="text" class="user-nickname" placeholder="닉네임">
+<br>
+<textarea class="user-input" cols="60" rows="5" placeholder="메세지"></textarea>
+<br>
 <button class="send-btn">전송</button>
 
 <hr>

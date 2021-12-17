@@ -124,5 +124,5 @@
 		- annotation-driven 태그를 작성하여 관련 어노테이션을 활성화
 	-->
 	<task:annotation-driven/>	
-		
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"></bean>
 </beans>
