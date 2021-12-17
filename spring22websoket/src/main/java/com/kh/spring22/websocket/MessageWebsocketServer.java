@@ -3,6 +3,7 @@ package com.kh.spring22.websocket;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;

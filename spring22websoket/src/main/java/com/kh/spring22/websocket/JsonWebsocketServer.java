@@ -1,6 +1,8 @@
 package com.kh.spring22.websocket;
 
-import java.util.Map;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -41,7 +43,19 @@ public class JsonWebsocketServer extends TextWebSocketHandler {
 		// 메세지를 분석하여 내용을 읽고 JSON 형태를 객체로 파싱(parsing)하는 작업이 필요하다
 		// = Jackson 라이브러리에 있는 ObjectMapper 클래스를 사용하여 파싱
 		// Map map = mapper.readValue(message.getPayload(), Map.class);
-		MessageVO vo = mapper.readValue(message.getPayload(), MessageVO.class);
+		MessageVO vo = mapper.readValue(message.getPayload(), MessageVO.class); // JSON String to 객체
 		log.debug("vo = {}", vo);
+		
+		//서버에서 시간 정보를 계산하여 vo에 추가한 뒤 모두에게 전송(broadcast)
+		Date d = new Date();
+		Format format = new SimpleDateFormat("a H:mm");
+		vo.setTime(format.format(d));
+		
+		String text = mapper.writeValueAsString(vo); // 객체 to JSON
+		TextMessage newMessage = new TextMessage(text);
+		
+		for(WebSocketSession user : users) {
+			user.sendMessage(newMessage);
+		}
 	}
 }

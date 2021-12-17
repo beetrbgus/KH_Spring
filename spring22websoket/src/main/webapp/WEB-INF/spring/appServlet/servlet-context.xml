@@ -94,6 +94,8 @@
 	<bean id="manageServer" class="com.kh.spring22.websocket.ManageWebsocketServer"></bean>
 	<bean id="messageServer" class="com.kh.spring22.websocket.MessageWebsocketServer"></bean>
 	<bean id="jsonServer" class="com.kh.spring22.websocket.JsonWebsocketServer"></bean>
+	<bean id="memberServer" class="com.kh.spring22.websocket.MemberWebsocketServer"></bean>
+	<bean id="sockjsServer" class="com.kh.spring22.websocket.SockjsWebsocketServer"></bean>
 	
 	<websocket:handlers>
 		
@@ -102,9 +104,38 @@
 			(주의) http에 같은 주소가 있으면 접속이 안된다 (sockjs 라는 기술로 해결 가능)
 		-->
 		<websocket:mapping handler="basicServer" path="/basicServer" />
-		<websocket:mapping handler="manageServer" path="/mangeServer" />
-		<websocket:mapping handler="messageServer" path="/messageServer" />
-		<websocket:mapping handler="jsonServer" path="jsonServer" />
+		
+		<!-- 
+			manageServer를 등록하고 ws://host:port/context/manageServer 를 처리하도록 위임
+		 -->
+		<websocket:mapping handler="manageServer" path="/manageServer"/>
+		
+		<websocket:mapping handler="messageServer" path="/messageServer"/>
+		
+		<websocket:mapping handler="jsonServer" path="/jsonServer"/>
+		
+		<websocket:mapping handler="memberServer" path="/memberServer"/>
+		
+		<websocket:mapping handler="sockjsServer" path="/sockjsServer"/>
+		
+		<!-- 
+			원래 웹소켓과 HTTP는 데이터 공유가 안되지만
+			웹소켓에서 HTTP에 있는 사용자 로그인 정보를 써야 하는 경우가 무조건 발생
+			따라서 스프링 웹소켓에서는 자체적으로 "인터셉터"를 제공하여 
+			이를 설정하면 세션 정보를 초기에 전달받을 수 있다
+		 -->
+		<websocket:handshake-interceptors>
+			<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></bean>
+		</websocket:handshake-interceptors>
+		
+		<!-- 
+			sockjs 스프링에서 공식적으로 지원하는 웹소켓 보완 기술(비슷한 기술로는 socket io가 있다.. nodeJS)
+			= IE 9 처럼 웹소켓을 지원하지 않는 브라우저는 Polling 방식으로 대체하여 유사 처리를 수행
+			= 개발할 때 웹소켓처럼 개발하면 자동 적용
+			= 여러가지 상태 헤더나 옵션등을 설정해서 웹소켓의 안정성과 성능 향상을 도모할 수 있다(heartbeat)
+		 -->
+		<websocket:sockjs></websocket:sockjs>
+		
 	</websocket:handlers>
 	
 </beans>
