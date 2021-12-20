@@ -11,9 +11,12 @@ public class ServerVO {
 	
 	//여러 개의 채널을 관리할 수 있는 저장소
 	private Set<ChannelVO> channels = new CopyOnWriteArraySet<>();
-
 	//채널과 관련된 기능들을 구현
 	
+	
+	public void enterWaitingRoom(UserVO user) {
+		
+	}
 	//채널 추가
 	public boolean add(String name) {
 		ChannelVO channel = new ChannelVO(name);
