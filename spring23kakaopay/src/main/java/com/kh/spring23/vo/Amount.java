@@ -1,5 +1,8 @@
 package com.kh.spring23.vo;
 
+import lombok.Data;
+
+@Data
 public class Amount {
 	private int total;//전체 결제 금액
 	private int tax_free;//비과세 금액

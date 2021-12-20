@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kh.spring23.dto.BuyDto;
 import com.kh.spring23.dto.ProductDto;
+import com.kh.spring23.repository.BuyDao;
 import com.kh.spring23.repository.ProductDao;
 import com.kh.spring23.service.KakaoPayService;
 import com.kh.spring23.vo.KakaoPayApproveRequestVO;
@@ -32,6 +34,12 @@ public class PayController {
 	
 	@Autowired
 	private KakaoPayService kakaoPayService;
+	
+	@Autowired
+	private ProductDao productDao;
+	
+	@Autowired
+	private BuyDao buyDao;
 
 	@GetMapping("/confirm")
 	public String confirm() {
@@ -85,6 +93,14 @@ public class PayController {
 		
 		KakaoPayApproveResponseVO responseVO = kakaoPayService.approve(requestVO);
 		
+		//결제가 완료된 시점 responseVO를 사용하여 buy 테이블에 insert를 수행
+		BuyDto buyDto = new BuyDto();
+		buyDto.setNo(Integer.parseInt(responseVO.getPartner_order_id()));
+		buyDto.setTid(responseVO.getTid());
+		buyDto.setItemName(responseVO.getItem_name());
+		buyDto.setTotalAmount((long)responseVO.getAmount().getTotal());
+		buyDao.insert(buyDto);
+		
 		return "redirect:success_result";
 	}
 	
@@ -92,9 +108,6 @@ public class PayController {
 	public String successResult() {
 		return "pay/success_result";
 	}
-	
-	@Autowired
-	private ProductDao productDao;
 	
 	@GetMapping("/confirm2")
 	public String confirm2(@RequestParam List<Integer> no, Model model) {
@@ -121,8 +134,12 @@ public class PayController {
 			total += productDto.getPrice();
 		}
 		
+		//partner_order_id로 사용할 번호를 추출
+		int sequence = buyDao.sequence();
+		
 		KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
-		requestVO.setPartner_order_id(UUID.randomUUID().toString());
+		//requestVO.setPartner_order_id(UUID.randomUUID().toString());//랜덤 방식의 주문번호
+		requestVO.setPartner_order_id(String.valueOf(sequence));//데이터베이스 시퀀스 기반 주문번호
 		requestVO.setPartner_user_id(UUID.randomUUID().toString());
 		requestVO.setItem_name(item_name);
 		requestVO.setQuantity(1);
