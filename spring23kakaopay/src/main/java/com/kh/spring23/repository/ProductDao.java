@@ -6,4 +6,6 @@ import com.kh.spring23.dto.ProductDto;
 
 public interface ProductDao {
 	public List<ProductDto>list();
+
+	public List<ProductDto> search(List<Integer> no);
 }

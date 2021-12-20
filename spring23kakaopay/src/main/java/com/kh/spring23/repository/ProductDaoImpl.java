@@ -1,6 +1,8 @@
 package com.kh.spring23.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,14 @@ public class ProductDaoImpl implements ProductDao{
 	@Override
 	public List<ProductDto> list() {
 		return sqlsession.selectList("list");
+	}
+
+	@Override
+	public List<ProductDto> search(List<Integer> no) {
+		
+		Map<String,Object> param = new HashMap<>();
+		param.put("list", no);
+		return sqlsession.selectList("search" , param );
 	}
 	
 }

@@ -1,25 +1,22 @@
 package com.kh.spring23.controller;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
+import com.kh.spring23.dto.ProductDto;
+import com.kh.spring23.repository.ProductDao;
 import com.kh.spring23.service.KakaoPayService;
 import com.kh.spring23.vo.KakaoPayApproveRequestVO;
 import com.kh.spring23.vo.KakaoPayApproveResponseVO;
@@ -94,5 +91,53 @@ public class PayController {
 	@GetMapping("/success_result")
 	public String successResult() {
 		return "pay/success_result";
+	}
+	
+	@Autowired
+	private ProductDao productDao;
+	
+	@GetMapping("/confirm2")
+	public String confirm2(@RequestParam List<Integer> no, Model model) {
+		//no를 이용하여 상품명단을 조회하고 model에 추가
+		List<ProductDto> list = productDao.search(no);
+		model.addAttribute("list", list);
+		return "pay/confirm2";
+	}
+	
+	//사용자가 최종 결제할 상품 번호를 취합해서 여러 정보를 계산하고 결제 요청을 보낸다
+	@PostMapping("/confirm2")
+	public String confirm2(@RequestParam List<Integer> no, HttpSession session) throws URISyntaxException {
+		//no를 이용하여 상품명단을 조회하고 model에 추가
+		List<ProductDto> list = productDao.search(no);
+		
+		//이름 계산
+		String item_name = list.get(0).getName();
+		if(list.size() > 1) {
+			item_name += " 외 "+(list.size()-1)+"건";
+		}
+		
+		long total = 0L;
+		for(ProductDto productDto : list) {
+			total += productDto.getPrice();
+		}
+		
+		KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
+		requestVO.setPartner_order_id(UUID.randomUUID().toString());
+		requestVO.setPartner_user_id(UUID.randomUUID().toString());
+		requestVO.setItem_name(item_name);
+		requestVO.setQuantity(1);
+		requestVO.setTotal_amount(total);
+		
+		KakaoPayReadyResponseVO responseVO = kakaoPayService.ready(requestVO);
+		
+		//success에서 사용할 수 있도록 세션에 다음 데이터를 첨부
+		//- partner_order_id
+		//- partner_user_id
+		//- tid
+		session.setAttribute("partner_order_id", requestVO.getPartner_order_id());
+		session.setAttribute("partner_user_id", requestVO.getPartner_user_id());
+		session.setAttribute("tid", responseVO.getTid());
+		
+		return "redirect:"+responseVO.getNext_redirect_pc_url();
 	}
 }
