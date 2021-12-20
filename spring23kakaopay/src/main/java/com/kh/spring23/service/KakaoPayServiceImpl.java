@@ -23,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class KakaoPayServiceImpl implements KakaoPayService{
 
-	public static final String AUTHORIZATION = "KakaoAK dd692dc3b4f35d869754f9ed2ce93287";
-	public static final String CONTENTTYPE = "application/x-www-form-urlencoded;charset=utf-8";
+	public static final String Authorization = "KakaoAK 5e12ceac5290f1c16e308f5335774ffa";
+	public static final String ContentType = "application/x-www-form-urlencoded;charset=utf-8";
 	
 	@Override
 	public KakaoPayReadyResponseVO ready(KakaoPayReadyRequestVO requestVO) throws URISyntaxException {
@@ -34,8 +34,8 @@ public class KakaoPayServiceImpl implements KakaoPayService{
 		//2. 필요한 정보 추가(HTTP header, HTTP body)
 		//2-1. HTTP Header 정보 생성
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", AUTHORIZATION);
-		headers.add("Content-type", CONTENTTYPE);
+		headers.add("Authorization", Authorization);
+		headers.add("Content-type", ContentType);
 		
 		//2-2. HTTP Body 정보 생성
 		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
@@ -76,8 +76,8 @@ public class KakaoPayServiceImpl implements KakaoPayService{
 		//2. 필요한 정보 추가(HTTP header, HTTP body)
 		//2-1. HTTP Header 정보 생성
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", AUTHORIZATION);
-		headers.add("Content-type", CONTENTTYPE);
+		headers.add("Authorization", Authorization);
+		headers.add("Content-type", ContentType);
 		
 		//2-2. HTTP Body 정보 생성
 		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
