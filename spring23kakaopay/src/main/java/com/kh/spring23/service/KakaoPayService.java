@@ -10,5 +10,5 @@ import com.kh.spring23.vo.KakaoPayReadyResponseVO;
 public interface KakaoPayService {
 	KakaoPayReadyResponseVO ready(KakaoPayReadyRequestVO requestVO) throws URISyntaxException;
 	
-	KakaoPayApproveResponseVO approve(KakaoPayApproveRequestVO requestVO);
+	KakaoPayApproveResponseVO approve(KakaoPayApproveRequestVO requestVO) throws URISyntaxException;
 }

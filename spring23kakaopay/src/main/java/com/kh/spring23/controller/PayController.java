@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.kh.spring23.service.KakaoPayService;
+import com.kh.spring23.vo.KakaoPayApproveRequestVO;
+import com.kh.spring23.vo.KakaoPayApproveResponseVO;
 import com.kh.spring23.vo.KakaoPayReadyRequestVO;
 import com.kh.spring23.vo.KakaoPayReadyResponseVO;
 
@@ -78,36 +80,13 @@ public class PayController {
 		session.removeAttribute("partner_user_id");
 		session.removeAttribute("tid");
 		
-		//1. 요청 도구 생성
-		RestTemplate template = new RestTemplate();
+		KakaoPayApproveRequestVO requestVO = new KakaoPayApproveRequestVO();
+		requestVO.setTid(tid);
+		requestVO.setPartner_order_id(partner_order_id);
+		requestVO.setPartner_user_id(partner_user_id);
+		requestVO.setPg_token(pg_token);
 		
-		//2. 필요한 정보 추가(HTTP header, HTTP body)
-		//2-1. HTTP Header 정보 생성
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "KakaoAK dd692dc3b4f35d869754f9ed2ce93287");
-		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-		
-		//2-2. HTTP Body 정보 생성
-		//= cid를 제외한 나머지 정보들은 Test02를 진행한 뒤 확인이 가능
-		//= cid는 테스트 개발용으로 "TC0ONETIME"을 사용
-		//= tid, partner_order_id, partner_user_id는 Test02의 실행 결과에서 확인 가능
-		//= pg_token은 Test02 실행 뒤 결제가 성공적으로 이루어지면 주소창의 파라미터에서 확인 가능
-		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-		body.add("cid", "TC0ONETIME");
-		body.add("tid", tid);
-		body.add("partner_order_id", partner_order_id);
-		body.add("partner_user_id", partner_user_id);
-		body.add("pg_token", pg_token);
-		
-		//2-3. Header와 Body를 합성
-		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
-		
-		//3. 목적지 설정
-		URI uri = new URI("https://kapi.kakao.com/v1/payment/approve");
-		
-		//4. 요청방식에 따라 다른 명령으로 전송
-		Map map = template.postForObject(uri, entity, Map.class);//응답을 기대하는 요청(JSON)
-		log.debug("map = {}", map);
+		KakaoPayApproveResponseVO responseVO = kakaoPayService.approve(requestVO);
 		
 		return "redirect:success_result";
 	}
@@ -117,8 +96,3 @@ public class PayController {
 		return "pay/success_result";
 	}
 }
-
-
-
-
-
