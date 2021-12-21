@@ -10,4 +10,6 @@ public interface BuyDao {
 	
 	List<BuyDto> list();
 	BuyDto get(int no);
+	
+	void refresh(int buyNo);
 }

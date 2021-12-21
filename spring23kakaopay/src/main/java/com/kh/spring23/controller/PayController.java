@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.spring23.dto.BuyDetailDto;
 import com.kh.spring23.dto.BuyDto;
@@ -24,6 +25,7 @@ import com.kh.spring23.repository.ProductDao;
 import com.kh.spring23.service.KakaoPayService;
 import com.kh.spring23.vo.KakaoPayApproveRequestVO;
 import com.kh.spring23.vo.KakaoPayApproveResponseVO;
+import com.kh.spring23.vo.KakaoPayCancelResponseVO;
 import com.kh.spring23.vo.KakaoPayReadyRequestVO;
 import com.kh.spring23.vo.KakaoPayReadyResponseVO;
 import com.kh.spring23.vo.KakaoPaySearchResponseVO;
@@ -203,4 +205,94 @@ public class PayController {
 		return "pay/history_detail";
 		
 	}
+	
+	//전체 취소 : 부분 취소가 진행된 항목을 전체 취소하게 되면? 에 대한 처리 여부에 따라서 코드가 달라짐
+	//= 10000원 중에서 4000원만 결제가 취소된 결제내역을 전체 취소하면 ---> 6000원만 취소처리 ---> 모든 항목을 다 취소처리
+	@GetMapping("/cancel_all")
+	public String cancelAll(@RequestParam int no, RedirectAttributes attr) throws URISyntaxException {
+		//(1) 요청한 결제내역이 전체취소라면 더이상 진행하면 안된다
+		BuyDto buyDto = buyDao.get(no);
+		if(buyDto.isAllCanceled()) {
+			throw new IllegalArgumentException("취소가 불가능한 항목입니다");
+		}
+		
+		//(2) 취소 가능한 금액을 계산해야 한다
+		long amount = buyDetailDao.getCancelAvailableAmount(no);
+		
+		//(3) 취소 처리를 수행한다
+		KakaoPayCancelResponseVO responseVO = kakaoPayService.cancel(buyDto.getTid(), amount);
+		
+		//(4) DB를 갱신
+		//4-1. 결제 상세 내역(buy_detail)을 취소 처리
+		buyDetailDao.cancelAll(no);
+		
+		//4-2. 결제 내역(buy)를 전체취소로 변경
+		buyDao.refresh(no);
+		
+		//return "redirect:history_detail?no="+no;
+		attr.addAttribute("no", no);
+		return "redirect:history_detail";
+	}
+	
+	//항목 취소 : 해당하는 항목이 취소가 가능한지 확인하고 취소가 가능한 경우 취소 처리 및 거래를 부분취소/전체취소로 변경
+	@GetMapping("/cancel_part")
+//	public String cancelPart(@ModelAttribute BuyDetailDto buyDetailDto) {
+	public String cancelPart(@RequestParam int buyNo, @RequestParam int productNo) throws URISyntaxException {
+		//(1) 요청한 항목이 취소가 가능한 상태인지 확인
+		BuyDetailDto buyDetailDto = buyDetailDao.get(buyNo, productNo);
+		if(!buyDetailDto.isCancelAvailable()) {//취소가 가능한 상황이 아니라면
+			throw new IllegalArgumentException("취소가 불가능한 항목입니다");
+		}
+		//(2) 취소 요청을 위한 정보를 수집(tid, amount)
+		BuyDto buyDto = buyDao.get(buyNo);//tid를 알 수 있다
+		
+		//(3) 취소 요청
+		KakaoPayCancelResponseVO responseVO = kakaoPayService.cancel(buyDto.getTid(), buyDetailDto.getPrice());
+		
+		//(4) 기록(DB)
+		//4-1. 구매상세(buy_detail) 테이블 항목의 상태를 취소로 변경
+		buyDetailDao.cancel(buyNo, productNo);
+		
+		//4-2. 구매(buy) 테이블 항목의 상태를 갱신
+		buyDao.refresh(buyNo);
+		
+		//(5) 다시 구매내역 상세 페이지로 이동
+		return "redirect:history_detail?no="+buyNo;
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

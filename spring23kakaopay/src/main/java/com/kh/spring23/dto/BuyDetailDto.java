@@ -10,4 +10,8 @@ public class BuyDetailDto {
 	private int quantity;
 	private int price;
 	private String status;
+	
+	public boolean isCancelAvailable() {
+		return status != null && status.equals("결제");
+	}
 }

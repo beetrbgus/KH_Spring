@@ -10,9 +10,12 @@
 	<li>거래명 : ${buyDto.itemName}</li>
 	<li>거래금액 : ${buyDto.totalAmount}</li>
 	<li>거래시각 : ${buyDto.buyTime}</li>
+	<li>현재상태 : ${buyDto.status}</li>
 </ul>
 
-<h2><a href="#">전체 취소</a></h2>
+<c:if test="${buyDto.status != '전체취소'}">
+<h2><a href="cancel_all?no=${buyDto.no}">전체 취소</a></h2>
+</c:if>
 
 <hr>
 
@@ -20,7 +23,10 @@
 <c:forEach var="buyDetailDto" items="${buyDetailList}">
 	<li>
 		${buyDetailDto}
-		<a href="#">해당항목 취소</a>
+		
+		<c:if test="${buyDetailDto.status != '취소'}">
+		<a href="cancel_part?buyNo=${buyDetailDto.buyNo}&productNo=${buyDetailDto.productNo}">해당항목 취소</a>
+		</c:if>
 	</li>
 </c:forEach>
 </ul>

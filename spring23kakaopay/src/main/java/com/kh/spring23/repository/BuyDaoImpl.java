@@ -34,4 +34,9 @@ public class BuyDaoImpl implements BuyDao{
 		return sqlSession.selectOne("buy.get", no);
 	}
 	
+	@Override
+	public void refresh(int buyNo) {
+		sqlSession.update("buy.refresh", buyNo);
+	}
+	
 }
