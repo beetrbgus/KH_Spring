@@ -11,7 +11,7 @@
 		<input type="checkbox" name="no" value="${productDto.no}">
 		
 		${productDto.no} / ${productDto.name} / ${productDto.price}
-	</div>"src/main/resources/mybatis/mapper/buy-detail-mapper.xml"
+	</div>
 </c:forEach>
 
 <input type="submit" value="구매하기">

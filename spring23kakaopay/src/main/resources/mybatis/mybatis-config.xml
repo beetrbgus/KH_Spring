@@ -33,7 +33,6 @@
 	<typeAliases>
 		<package name="com.kh.spring23.dto"/>
 		<package name="com.kh.spring23.vo"/>
-		
 	</typeAliases>
 	
 	

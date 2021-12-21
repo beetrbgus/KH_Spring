@@ -12,20 +12,20 @@ import com.kh.spring23.dto.ProductDto;
 
 @Repository
 public class ProductDaoImpl implements ProductDao{
+	
 	@Autowired
-	private SqlSession sqlsession;
+	private SqlSession sqlSession;
 
 	@Override
 	public List<ProductDto> list() {
-		return sqlsession.selectList("list");
+		return sqlSession.selectList("product.list");
 	}
 
 	@Override
 	public List<ProductDto> search(List<Integer> no) {
-		
-		Map<String,Object> param = new HashMap<>();
+		Map<String, Object> param = new HashMap<>();
 		param.put("list", no);
-		return sqlsession.selectList("search" , param );
+		return sqlSession.selectList("product.search", param);
 	}
-	
+
 }
