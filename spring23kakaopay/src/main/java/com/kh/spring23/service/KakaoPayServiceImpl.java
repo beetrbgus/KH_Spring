@@ -16,6 +16,7 @@ import com.kh.spring23.vo.KakaoPayApproveRequestVO;
 import com.kh.spring23.vo.KakaoPayApproveResponseVO;
 import com.kh.spring23.vo.KakaoPayReadyRequestVO;
 import com.kh.spring23.vo.KakaoPayReadyResponseVO;
+import com.kh.spring23.vo.KakaoPaySearchResponseVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -99,5 +100,34 @@ public class KakaoPayServiceImpl implements KakaoPayService{
 		
 		return responseVO;
 	}
+
+	@Override
+	public KakaoPaySearchResponseVO search(String tid) throws URISyntaxException {
+		RestTemplate template = new RestTemplate();
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", Authorization);
+		headers.add("Content-type", ContentType);
+		
+		MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
+		body.add("cid", "TC0ONETIME");
+		body.add("tid", tid);
+		
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+		
+		URI uri = new URI("https://kapi.kakao.com/v1/payment/order");
+		
+		KakaoPaySearchResponseVO responseVO = template.postForObject(uri, entity, KakaoPaySearchResponseVO.class);
+		return responseVO;
+	}
 	
 }
+
+
+
+
+
+
+
+
+

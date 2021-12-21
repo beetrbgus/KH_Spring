@@ -1,5 +1,7 @@
 package com.kh.spring23.repository;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,16 @@ public class BuyDaoImpl implements BuyDao{
 	@Override
 	public void insert(BuyDto buyDto) {
 		sqlSession.insert("buy.insert", buyDto);
+	}
+
+	@Override
+	public List<BuyDto> list() {
+		return sqlSession.selectList("buy.list");
+	}
+	
+	@Override
+	public BuyDto get(int no) {
+		return sqlSession.selectOne("buy.get", no);
 	}
 	
 }

@@ -22,4 +22,9 @@
 		)
 	</insert>
 	
+	<select id="list" parameterType="int" resultType="BuyDetailDto">
+		select * from buy_detail where buy_no = #{buyNo}
+		order by product_no asc
+	</select>
+	
 </mapper>

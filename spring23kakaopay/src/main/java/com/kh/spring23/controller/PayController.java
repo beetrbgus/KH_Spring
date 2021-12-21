@@ -26,6 +26,7 @@ import com.kh.spring23.vo.KakaoPayApproveRequestVO;
 import com.kh.spring23.vo.KakaoPayApproveResponseVO;
 import com.kh.spring23.vo.KakaoPayReadyRequestVO;
 import com.kh.spring23.vo.KakaoPayReadyResponseVO;
+import com.kh.spring23.vo.KakaoPaySearchResponseVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -180,24 +181,26 @@ public class PayController {
 		
 		return "redirect:"+responseVO.getNext_redirect_pc_url();
 	}
+	
+	@GetMapping("/history")
+	public String history(Model model) {
+		model.addAttribute("list", buyDao.list());
+		return "pay/history";
+	}
+	
+	@GetMapping("/history_detail")
+	public String historyDetail(@RequestParam int no, Model model) throws URISyntaxException {
+		//구해야하는 것 : 결제정보(BuyDto), 상세목록(List<BuyDetailDto>), 카카오페이 조회정보(KakaoPaySearchResponseVO)
+		
+		BuyDto buyDto = buyDao.get(no);
+		List<BuyDetailDto> list = buyDetailDao.list(no);
+		KakaoPaySearchResponseVO responseVO = kakaoPayService.search(buyDto.getTid());
+		
+		model.addAttribute("buyDto", buyDto);
+		model.addAttribute("buyDetailList", list);
+		model.addAttribute("responseVO", responseVO);
+		
+		return "pay/history_detail";
+		
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

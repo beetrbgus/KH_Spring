@@ -26,4 +26,12 @@
 		)
 	</insert>
 	
+	<select id="list" resultType="BuyDto">
+		select * from buy order by no asc
+	</select>
+	
+	<select id="get" parameterType="int" resultType="BuyDto">
+		select * from buy where no = #{no}
+	</select>
+	
 </mapper>
