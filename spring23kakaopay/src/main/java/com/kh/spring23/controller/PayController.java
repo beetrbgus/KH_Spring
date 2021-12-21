@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kh.spring23.dto.BuyDetailDto;
 import com.kh.spring23.dto.BuyDto;
 import com.kh.spring23.dto.ProductDto;
 import com.kh.spring23.repository.BuyDao;
+import com.kh.spring23.repository.BuyDetailDao;
 import com.kh.spring23.repository.ProductDao;
 import com.kh.spring23.service.KakaoPayService;
 import com.kh.spring23.vo.KakaoPayApproveRequestVO;
@@ -40,6 +42,9 @@ public class PayController {
 	
 	@Autowired
 	private BuyDao buyDao;
+	
+	@Autowired
+	private BuyDetailDao buyDetailDao;
 
 	@GetMapping("/confirm")
 	public String confirm() {
@@ -78,12 +83,15 @@ public class PayController {
 		//- partner_order_id
 		//- partner_user_id
 		//- tid
+		//- list(상품 상세 내역)
 		String partner_order_id = (String) session.getAttribute("partner_order_id");
 		String partner_user_id = (String) session.getAttribute("partner_user_id");
 		String tid = (String) session.getAttribute("tid");
+		List<ProductDto> list = (List<ProductDto>) session.getAttribute("list");
 		session.removeAttribute("partner_order_id");
 		session.removeAttribute("partner_user_id");
 		session.removeAttribute("tid");
+		session.removeAttribute("list");
 		
 		KakaoPayApproveRequestVO requestVO = new KakaoPayApproveRequestVO();
 		requestVO.setTid(tid);
@@ -98,8 +106,21 @@ public class PayController {
 		buyDto.setNo(Integer.parseInt(responseVO.getPartner_order_id()));
 		buyDto.setTid(responseVO.getTid());
 		buyDto.setItemName(responseVO.getItem_name());
-		buyDto.setTotalAmount((long)responseVO.getAmount().getTotal());
-		buyDao.insert(buyDto);
+		buyDto.setTotalAmount(responseVO.getAmount().getTotal());
+		buyDao.insert(buyDto);//거래번호 생성
+		
+		//대표 결제정보가 등록된 다음 상세 결제정보를 등록(buy_detail)
+		//= 상세 결제정보 데이터는 어디서?
+		for(ProductDto productDto : list) {
+			BuyDetailDto buyDetailDto = new BuyDetailDto();
+			buyDetailDto.setBuyNo(buyDto.getNo());//결제번호
+			buyDetailDto.setProductNo(productDto.getNo());//상품번호
+			buyDetailDto.setProductName(productDto.getName());//상품이름
+			buyDetailDto.setQuantity(1);//수량(1로 가정)
+			buyDetailDto.setPrice(productDto.getPrice() * 1);//총금액 = 개당금액 * 수량
+			
+			buyDetailDao.insert(buyDetailDto);
+		}
 		
 		return "redirect:success_result";
 	}
@@ -151,10 +172,32 @@ public class PayController {
 		//- partner_order_id
 		//- partner_user_id
 		//- tid
+		//- list(상품 상세 목록)
 		session.setAttribute("partner_order_id", requestVO.getPartner_order_id());
 		session.setAttribute("partner_user_id", requestVO.getPartner_user_id());
 		session.setAttribute("tid", responseVO.getTid());
+		session.setAttribute("list", list);
 		
 		return "redirect:"+responseVO.getNext_redirect_pc_url();
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

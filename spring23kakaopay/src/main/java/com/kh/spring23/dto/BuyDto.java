@@ -9,6 +9,6 @@ public class BuyDto {
 	private int no;
 	private String tid;
 	private String itemName;
-	private Long totalAmount;
+	private long totalAmount;
 	private Date buyTime;
 }
