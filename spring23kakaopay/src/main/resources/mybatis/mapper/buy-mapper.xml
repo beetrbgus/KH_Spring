@@ -22,7 +22,7 @@
 
 	<insert id="insert" parameterType="BuyDto">
 		insert into buy values(
-			#{no}, #{tid}, #{itemName}, #{totalAmount}, sysdate
+			#{no}, #{tid}, #{itemName}, #{totalAmount}, sysdate, '결제완료'
 		)
 	</insert>
 	

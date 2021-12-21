@@ -18,7 +18,7 @@
 
 	<insert id="insert" parameterType="BuyDetailDto">
 		insert into buy_detail values(
-			#{buyNo}, #{productNo}, #{productName}, #{quantity}, #{price}
+			#{buyNo}, #{productNo}, #{productName}, #{quantity}, #{price}, '결제'
 		)
 	</insert>
 	

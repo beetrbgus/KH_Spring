@@ -11,4 +11,5 @@ public class BuyDto {
 	private String itemName;
 	private long totalAmount;
 	private Date buyTime;
+	private String status;
 }

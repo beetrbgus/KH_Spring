@@ -12,11 +12,16 @@
 	<li>거래시각 : ${buyDto.buyTime}</li>
 </ul>
 
+<h2><a href="#">전체 취소</a></h2>
+
 <hr>
 
 <ul>
 <c:forEach var="buyDetailDto" items="${buyDetailList}">
-	<li>${buyDetailDto}</li>
+	<li>
+		${buyDetailDto}
+		<a href="#">해당항목 취소</a>
+	</li>
 </c:forEach>
 </ul>
 
